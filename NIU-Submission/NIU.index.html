@@ -1,0 +1,465 @@
+<html>
+<head>
+<title>Project 1</title>
+<style type="text/css" href="project1.css"></style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!--Put your D3 import statement between these two lines-->
+   <script src="http://d3js.org/d3.v4.js" charset="utf-8"></script>
+<!--Put your D3 import statement between these two lines-->
+<style type='text/css'>
+body {
+    background-color: lightblue
+}
+div.Part5 {
+    position: relative;
+    width: 1000px;
+    height: 800px;
+
+} 
+div.left {
+    position: absolute;
+    top: 50px;
+    left: 50 px;
+    width: 400 px;
+    height: 200 px;
+    
+}	
+div.right{
+position:relative;
+top:-400px;
+right:-500px;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 60px;
+  height: 28px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: lightsteelblue;
+  border:3px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+	<div id="partOne">
+        <h1>Part One: </h1>
+        I've made a change!
+	</div>
+    
+    <div id="partTwo">
+        <h1>Part Two&amp; Four: </h1>
+        <div id="part2">
+        </div>
+	</div>
+    
+    <div id="partThree">
+        <h1>Part Three : </h1>
+        <div id="part3">
+            <p id="scatterLabel"></p>
+        </div>
+	</div>
+    
+    <div id="partFive">
+        <h1>Part Five: </h1>
+		<div class="Part5">
+        <div id="part5">
+		<div class ="left">
+			<div id="chart1">
+			</div>
+			<div id="chart2">
+			</div>
+	<div class ="right">
+			<div id="chart3">
+			</div>
+			<div id="chart4">
+			
+        </div>
+	</div>
+    
+    <script type="text/javascript">
+        // Put your part one code here ***********************
+	d3.csv("data/anscombe_I.csv",function(error,data){
+		if(error) throw error;
+		checkDataset(data);
+ });    
+	d3.csv("data/anscombe_II.csv",function(error,data){
+		if(error) throw error;
+		checkDataset(data);
+ });    
+	d3.csv("data/anscombe_III.csv",function(error,data){
+		if(error) throw error;
+		checkDataset(data);
+ });    
+	d3.csv("data/anscombe_IV.csv",function(error,data){
+		if(error) throw error;
+		checkDataset(data);
+ });    
+        // Leave this to test your data uploading. All data uploading should be above this line
+        function checkDataset(dataset) {
+            if (dataset.length == 11)
+                $("#partOne").append("<p>data loaded correctly</p>");
+            else
+                $("#partOne").append("<p>data loaded incorrectly. Try using the debugger to help you find the bug!</p>");
+        }
+        
+        
+	//Put your part two code here 
+	//Reference:http://bl.ocks.org/d3noob/38744a17f9c0141bcd04
+	d3.csv("data/anscombe_I.csv", function(data) {
+		var margin = {top: 50, right: 20, bottom: 30, left: 60}
+	      , width = 960 - margin.left - margin.right
+	      , height = 500 - margin.top - margin.bottom;
+		// set the ranges
+		var x_scale = d3.scaleLinear()
+			.domain([0, d3.max(data, function(d) {return d.x;})])
+			.range([0, width]);
+		var y_scale = d3.scaleLinear()
+			.domain([0, d3.max(data, function(d){return d.y;})])
+			.range([height, 0]);
+		 // Create a chart
+		var chart = d3.select('#part2')
+			.append('svg')
+			.attr('width', width + margin.right + margin.left)
+			.attr('height', height + margin.top + margin.bottom)
+			.attr('id', 'scatter_chart')
+		
+		var svg = chart.append('g')
+			.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+			.attr('width', width)
+			.attr('height', height)
+			.attr('class', 'svg')
+		// draw the x axis
+	    	var xAxis = d3.axisBottom()
+			.scale(x_scale);
+
+		svg.append('g')
+			.attr('transform', 'translate(0,' + height + ')')
+			.attr('class', 'svg axis')
+			.call(xAxis);
+
+		// draw the y axis
+		var yAxis = d3.axisLeft()
+			.scale(y_scale);
+		
+		svg.append('g')
+			.attr('transform', 'translate(0,0)')
+			.attr('class', 'svg axis')
+			.call(yAxis);
+		//Add tooltip mouseover
+		var div = d3.select("body").append("div")
+			.attr("class", "tooltip")
+			.style("opacity", 0);
+			
+		var g = svg.append("g").attr('id', 'test_dots'); 
+		g.selectAll("#scatter_dots")
+			.data(data)
+			.enter().append("svg:circle")
+			.attr("cx", function (d,i) { return x_scale(d.x); } )
+			.attr("cy", function (d) { return y_scale(d.y); } )
+			.attr("r", 4)
+			.on("mouseover", function(d) {
+				div.transition().duration(200).style("opacity", .9);
+				div.html(d.x + "<br/>" + d.y)
+					.style("left", (d3.event.pageX) + "px")
+					.style("top", (d3.event.pageY - 18) + "px");
+			})
+			.on("mouseout", function(d) {
+				div.transition()
+				.duration(500)
+				.style("opacity", 0);
+			});
+		
+			
+            
+            });
+        // Put your part three & four code here ***********************
+		// Reference https://www.youtube.com/watch?v=T7KUZfwbYaA
+        d3.csv("data/anscombe_II.csv", function(data3){
+		console.log(data3);
+		var margin = {top: 20, right: 20, bottom: 30, left: 50},
+		width = 960 - margin.left - margin.right,
+		height = 500 - margin.top - margin.bottom;
+
+		// set the ranges
+		var x = d3.scaleLinear().range([0, width]);
+		var y = d3.scaleLinear().range([height, 0]); 
+
+		// define the line
+		var valueline = d3.line()
+			.x(function(d, i) { return x(i); })
+			.y(function(d) { return y(d.y); });
+
+       		// Create a line chart
+		var svg = d3.select("#part3").append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+			.attr('id', 'line3')
+			.append("g")
+			.attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+		// sort data
+		//data3.sort(function(a, b){
+		//	return d3.ascending(a.y, b.y);
+		//});
+		
+		// Scale the range of the data
+		x.domain([0, d3.max(data3, function(d) { return d.x; })]);
+		y.domain([0, d3.max(data3, function(d) { return d.y; })]);
+		
+
+		// Add the valueline path.
+		svg.append("path").attr("d", valueline(data3))
+			.attr("stroke-width", 2)
+			.attr("stroke", "blue")
+			.attr("fill", "none");;
+		// Add the X Axis
+		svg.append("g")
+			.attr("transform", "translate(0," + height + ")")
+			.call(d3.axisBottom(x));
+		// Add the Y Axis
+		svg.append("g").call(d3.axisLeft(y));
+	});
+		
+        // Put your part five code here ***********************
+		//Reference https://www.w3schools.com/cssref/pr_class_position.asp
+		d3.csv("data/anscombe_I.csv", function(data) {
+		var margin = {top: 50, right: 20, bottom: 30, left: 60}
+	      , width = 400 - margin.left - margin.right
+	      , height = 200 - margin.top - margin.bottom;
+		
+		var x_scale = d3.scaleLinear()
+			.domain([0, d3.max(data, function(d) {return d.x;})])
+			.range([0, width]);
+		var y_scale = d3.scaleLinear()
+			.domain([0, d3.max(data, function(d){return d.y;})])
+			.range([height, 0]);
+		
+		var chart = d3.select('#chart1')
+			.append('svg')
+			.attr('width', width + margin.right + margin.left)
+			.attr('height', height + margin.top + margin.bottom)
+			.attr('id', 'scatter_chart')
+		
+		var svg = chart.append('g')
+			.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+			.attr('width', width)
+			.attr('height', height)
+			.attr('class', 'svg')
+		// draw the x axis
+	    var xAxis = d3.axisBottom()
+			.scale(x_scale);
+
+		svg.append('g')
+			.attr('transform', 'translate(0,' + height + ')')
+			.attr('class', 'svg axis')
+			.call(xAxis);
+
+		// draw the y axis
+		var yAxis = d3.axisLeft()
+			.scale(y_scale);
+		
+		svg.append('g')
+			.attr('transform', 'translate(0,0)')
+			.attr('class', 'svg axis')
+			.call(yAxis);
+		
+		 var g = svg.append("g").attr('id', 'test_dots'); 
+			g.selectAll("#scatter_dots")
+			.data(data)
+			.enter().append("svg:circle")
+			.attr("cx", function (d,i) { return x_scale(d.x); } )
+			.attr("cy", function (d) { return y_scale(d.y); } )
+			.attr("r", 4);
+		// add the title
+		svg.append("text")
+			.attr("x", (width / 2))             
+			.attr("y", 0 - (margin.top / 2))
+			.attr("text-anchor", "middle")  
+			.style("font-size", "16px") 
+			.style("text-decoration", "underline")  
+			.text("anscombe_I");
+	});	
+		//Part five chart2
+		d3.csv("data/anscombe_II.csv", function(data2) {
+		var margin = {top: 50, right: 20, bottom: 30, left: 60}
+	      , width = 400 - margin.left - margin.right
+	      , height = 200 - margin.top - margin.bottom;
+		
+		var x_scale = d3.scaleLinear()
+			.domain([0, d3.max(data2, function(d) {return d.x;})])
+			.range([0, width]);
+		var y_scale = d3.scaleLinear()
+			.domain([0, d3.max(data2, function(d){return d.y;})])
+			.range([height, 0]);
+		
+		var chart2 = d3.select('#chart2')
+			.append('svg')
+			.attr('width', width + margin.right + margin.left)
+			.attr('height', height + margin.top + margin.bottom)
+			.attr('id', 'scatter_chart')
+		
+		var svg = chart2.append('g')
+			.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+			.attr('width', width)
+			.attr('height', height)
+			.attr('class', 'svg')
+		// draw the x axis
+	    var xAxis = d3.axisBottom()
+			.scale(x_scale);
+
+		svg.append('g')
+			.attr('transform', 'translate(0,' + height + ')')
+			.attr('class', 'svg axis')
+			.call(xAxis);
+
+		// draw the y axis
+		var yAxis = d3.axisLeft()
+			.scale(y_scale);
+		
+		svg.append('g')
+			.attr('transform', 'translate(0,0)')
+			.attr('class', 'svg axis')
+			.call(yAxis);
+		
+		 var g = svg.append("g").attr('id', 'test_dots'); 
+			g.selectAll("#scatter_dots")
+			.data(data2)
+			.enter().append("svg:circle")
+			.attr("cx", function (d,i) { return x_scale(d.x); } )
+			.attr("cy", function (d) { return y_scale(d.y); } )
+			.attr("r", 4);	
+		// add the title
+		svg.append("text")
+			.attr("x", (width / 2))             
+			.attr("y", 0 - (margin.top / 2))
+			.attr("text-anchor", "middle")  
+			.style("font-size", "16px") 
+			.style("text-decoration", "underline")  
+			.text("anscombe_II");
+	});
+	//Part5 chart3
+	d3.csv("data/anscombe_III.csv", function(data2) {
+		var margin = {top: 50, right: 20, bottom: 30, left: 60}
+	      , width = 400 - margin.left - margin.right
+	      , height = 200 - margin.top - margin.bottom;
+		
+		var x_scale = d3.scaleLinear()
+			.domain([0, d3.max(data2, function(d) {return d.x;})])
+			.range([0, width]);
+		var y_scale = d3.scaleLinear()
+			.domain([0, d3.max(data2, function(d){return d.y;})])
+			.range([height, 0]);
+		
+		var chart3 = d3.select('#chart3')
+			.append('svg')
+			.attr('width', width + margin.right + margin.left)
+			.attr('height', height + margin.top + margin.bottom)
+			.attr('id', 'scatter_chart')
+		
+		var svg = chart3.append('g')
+			.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+			.attr('width', width)
+			.attr('height', height)
+			.attr('class', 'svg')
+		// draw the x axis
+	    var xAxis = d3.axisBottom()
+			.scale(x_scale);
+
+		svg.append('g')
+			.attr('transform', 'translate(0,' + height + ')')
+			.attr('class', 'svg axis')
+			.call(xAxis);
+
+		// draw the y axis
+		var yAxis = d3.axisLeft()
+			.scale(y_scale);
+		
+		svg.append('g')
+			.attr('transform', 'translate(0,0)')
+			.attr('class', 'svg axis')
+			.call(yAxis);
+		
+		 var g = svg.append("g").attr('id', 'test_dots'); 
+			g.selectAll("#scatter_dots")
+			.data(data2)
+			.enter().append("svg:circle")
+			.attr("cx", function (d,i) { return x_scale(d.x); } )
+			.attr("cy", function (d) { return y_scale(d.y); } )
+			.attr("r", 4);	
+		// add the title
+		svg.append("text")
+			.attr("x", (width / 2))             
+			.attr("y", 0 - (margin.top / 2))
+			.attr("text-anchor", "middle")  
+			.style("font-size", "16px") 
+			.style("text-decoration", "underline")  
+			.text("anscombe_III");
+	});
+	//Part5 chart4
+	d3.csv("data/anscombe_IV.csv", function(data2) {
+		var margin = {top: 50, right: 20, bottom: 30, left: 60}
+	      , width = 400 - margin.left - margin.right
+	      , height = 200 - margin.top - margin.bottom;
+		
+		var x_scale = d3.scaleLinear()
+			.domain([0, d3.max(data2, function(d) {return d.x;})])
+			.range([0, width]);
+		var y_scale = d3.scaleLinear()
+			.domain([0, d3.max(data2, function(d){return d.y;})])
+			.range([height, 0]);
+		
+		var chart4 = d3.select('#chart4')
+			.append('svg')
+			.attr('width', width + margin.right + margin.left)
+			.attr('height', height + margin.top + margin.bottom)
+			.attr('id', 'scatter_chart')
+		
+		var svg = chart4.append('g')
+			.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+			.attr('width', width)
+			.attr('height', height)
+			.attr('class', 'svg')
+		// draw the x axis
+	    var xAxis = d3.axisBottom()
+			.scale(x_scale);
+
+		svg.append('g')
+			.attr('transform', 'translate(0,' + height + ')')
+			.attr('class', 'svg axis')
+			.call(xAxis);
+
+		// draw the y axis
+		var yAxis = d3.axisLeft()
+			.scale(y_scale);
+		
+		svg.append('g')
+			.attr('transform', 'translate(0,0)')
+			.attr('class', 'svg axis')
+			.call(yAxis);
+		
+		 var g = svg.append("g").attr('id', 'test_dots'); 
+			g.selectAll("#scatter_dots")
+			.data(data2)
+			.enter().append("svg:circle")
+			.attr("cx", function (d,i) { return x_scale(d.x); } )
+			.attr("cy", function (d) { return y_scale(d.y); } )
+			.attr("r", 4);	
+		// add the title
+		svg.append("text")
+			.attr("x", (width / 2))             
+			.attr("y", 0 - (margin.top / 2))
+			.attr("text-anchor", "middle")  
+			.style("font-size", "16px") 
+			.style("text-decoration", "underline")  
+			.text("anscombe_IV");
+	});
+    </script>
+</body>
+
+
+</html>
